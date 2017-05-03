@@ -1,0 +1,20 @@
+#Port COM (par exemple COM12)
+COM12
+
+#ID de la chaine YouTube
+UCRhyS_ylPQ5GWBl1lK92ftA
+
+#Clé API YouTube
+clé
+
+#Nom du compte Twitter
+leotechmaker
+
+#Token d'accès Facebook
+token
+
+#Durée d'affichage des différents médias en multiple de 2sec (3 = 6 secondes d'affichage)
+2
+
+#Maintient d'un média (0 = non, 1 = YouTube, 2 = Twitter, 3 = Facebook)
+0
