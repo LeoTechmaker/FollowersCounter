@@ -2,16 +2,19 @@
 COM12
 
 #ID de la chaine YouTube
-UCRhyS_ylPQ5GWBl1lK92ftA
+votreIdYoutube
 
 #Clé API YouTube
-clé
+votreCléApiYoutube
 
 #Nom du compte Twitter
 leotechmaker
 
+#ID de la page Facebook
+votreIdFacebook
+
 #Token d'accès Facebook
-token
+votreTokenFacebook
 
 #Durée d'affichage des différents médias en multiple de 2sec (3 = 6 secondes d'affichage)
 2

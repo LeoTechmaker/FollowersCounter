@@ -12,6 +12,7 @@ namespace Compteur_abonnes
         static string youTubeChannelId = string.Empty;
         static string youTubeApiKey = string.Empty;
         static string twitterPageName = string.Empty;
+        static string facebookPageId = string.Empty;
         static string facebookAccessToken = string.Empty;
         static int mediaDuration = 0;
         static byte mediaHold = 0;
@@ -29,6 +30,7 @@ namespace Compteur_abonnes
                 youTubeChannelId = readFileLineExcludingComment(file);
                 youTubeApiKey = readFileLineExcludingComment(file);
                 twitterPageName = readFileLineExcludingComment(file);
+                facebookPageId = readFileLineExcludingComment(file);
                 facebookAccessToken = readFileLineExcludingComment(file);
                 mediaDuration = int.Parse(readFileLineExcludingComment(file));
                 mediaHold = BitConverter.GetBytes(int.Parse(readFileLineExcludingComment(file)))[0];
@@ -43,7 +45,7 @@ namespace Compteur_abonnes
                 Environment.Exit(0);
             }
 
-            if(comPortName == string.Empty || youTubeChannelId == string.Empty || youTubeApiKey == string.Empty || twitterPageName == string.Empty || facebookAccessToken == string.Empty || mediaDuration < 1 || mediaHold < 0 || mediaHold > mediaCount)
+            if(comPortName == string.Empty || youTubeChannelId == string.Empty || youTubeApiKey == string.Empty || twitterPageName == string.Empty || facebookPageId == string.Empty || facebookAccessToken == string.Empty || mediaDuration < 1 || mediaHold < 0 || mediaHold > mediaCount)
             {
                 Console.WriteLine("Paramètre(s) du fichier Settings invalide(s)");
                 Console.Read();
@@ -214,7 +216,7 @@ namespace Compteur_abonnes
         {
             System.Net.WebClient wb = new System.Net.WebClient();
 
-            string jsonDatas = wb.DownloadString("https://graph.facebook.com/v2.8/538994972920294?fields=fan_count&access_token=" + facebookAccessToken);
+            string jsonDatas = wb.DownloadString("https://graph.facebook.com/v2.8/" + facebookPageId + "?fields=fan_count&access_token=" + facebookAccessToken);
 
             dynamic response = JObject.Parse(jsonDatas);
 
