@@ -11,4 +11,6 @@ Facebook : https://developers.facebook.com/
 
 Pour Twitter seul le nom d'utilisateur suffit, pas besoin de clé d'API.
 
+Il suffit ensuite de les rajouter sur le fichier "settings.txt"
+
 Si vous avez des idées d'améliorations n'hésitez pas à les soumettre ;)
