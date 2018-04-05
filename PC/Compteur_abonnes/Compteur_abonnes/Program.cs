@@ -6,19 +6,25 @@ namespace Compteur_abonnes
 {
     class Program
     {
-        static SerialPort comPort = new SerialPort();
+        //static SerialPort comPort = new SerialPort();
+        static FakeSerialPort comPort = new FakeSerialPort();
 
-        static string comPortName = string.Empty;
-        static string youTubeChannelId = string.Empty;
-        static string youTubeApiKey = string.Empty;
-        static string twitterPageName = string.Empty;
-        static string facebookPageId = string.Empty;
+        static string comPortName         = string.Empty;
+        static string youTubeChannelId    = string.Empty;
+        static string youTubeApiKey       = string.Empty;
+        static string twitterPageName     = string.Empty;
+        static string facebookPageId      = string.Empty;
         static string facebookAccessToken = string.Empty;
-        static int mediaDuration = 0;
-        static byte mediaHold = 0;
+        static int    mediaDuration       = 0;
+        static byte   mediaHold           = 0;
 
         const byte mediaCount = 3;
         static string[] mediaNames = new string[mediaCount] {"YouTube", "Twitter", "Facebook"};
+
+        static void ExceptionMngt(Exception e)
+        {
+
+        }
 
         static void Main(string[] args)
         {
@@ -26,21 +32,21 @@ namespace Compteur_abonnes
             {
                 System.IO.StreamReader file = new System.IO.StreamReader("Settings.txt");
 
-                comPortName = readFileLineExcludingComment(file);
-                youTubeChannelId = readFileLineExcludingComment(file);
-                youTubeApiKey = readFileLineExcludingComment(file);
-                twitterPageName = readFileLineExcludingComment(file);
-                facebookPageId = readFileLineExcludingComment(file);
+                comPortName         = readFileLineExcludingComment(file);
+                youTubeChannelId    = readFileLineExcludingComment(file);
+                youTubeApiKey       = readFileLineExcludingComment(file);
+                twitterPageName     = readFileLineExcludingComment(file);
+                facebookPageId      = readFileLineExcludingComment(file);
                 facebookAccessToken = readFileLineExcludingComment(file);
-                mediaDuration = int.Parse(readFileLineExcludingComment(file));
-                mediaHold = BitConverter.GetBytes(int.Parse(readFileLineExcludingComment(file)))[0];
+                mediaDuration       = int.Parse(readFileLineExcludingComment(file));
+                mediaHold           = BitConverter.GetBytes(int.Parse(readFileLineExcludingComment(file)))[0];
 
                 file.Close();
             }
             catch(Exception e)
             {
                 Console.WriteLine("Fichier Settings invalide");
-                Console.WriteLine(e.ToString());
+                Console.WriteLine(e.Message);
                 Console.Read();
                 Environment.Exit(0);
             }
@@ -62,7 +68,7 @@ namespace Compteur_abonnes
             catch(Exception e)
             {
                 Console.WriteLine("Port COM invalide (" + comPortName + ")");
-                Console.WriteLine(e.ToString());
+                Console.WriteLine(e.Message);
                 Console.Read();
                 Environment.Exit(0);
             }
@@ -116,7 +122,7 @@ namespace Compteur_abonnes
                 catch(Exception e)
                 {
                     Console.WriteLine("Erreur de lecture des données pour le média " + mediaNames[media - 1]);
-                    Console.WriteLine(e.ToString());
+                    Console.WriteLine(e.Message);
                     Console.Read();
                     Environment.Exit(0);
                 }
@@ -130,7 +136,7 @@ namespace Compteur_abonnes
                 catch(Exception e)
                 {
                     Console.WriteLine("Erreur de traitement ou d'envoi des données pour le média " + mediaNames[media - 1] + " sur le port " + comPortName);
-                    Console.WriteLine(e.ToString());
+                    Console.WriteLine(e.Message);
                     Console.Read();
                     Environment.Exit(0);
                 }

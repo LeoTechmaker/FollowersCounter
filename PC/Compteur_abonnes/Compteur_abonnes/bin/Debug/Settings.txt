@@ -2,10 +2,10 @@
 COM12
 
 #ID de la chaine YouTube
-votreIdYoutube
+UCNmW0jusQyTPZQGHtKwNOIw
 
 #Clé API YouTube
-votreCléApiYoutube
+AIzaSyBrnhApXr5--1GGQRWYlrO67RACyUVbqIk
 
 #Nom du compte Twitter
 leotechmaker
