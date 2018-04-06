@@ -23,6 +23,8 @@ namespace Compteur_abonnes
 
         internal void Write(byte[] bytesToSend, int v1, int v2)
         {
+            Console.Write("FakeSerialPort : ");
+            
             for(int i = v1; i < v2; i++)
             {
                 Console.Write(bytesToSend[i] + " ");
