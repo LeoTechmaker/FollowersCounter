@@ -23,11 +23,13 @@ namespace Compteur_abonnes
 
         static void ExceptionMngt(Exception e)
         {
-
+            // TODO 001 : Implémenter ExceptionMngt ou mieux gérer les exceptions
         }
 
         static void Main(string[] args)
         {
+            // TODO 002 : Un peu trop de blocs try / catch dans le main. Un seul bloc englobant le main devrait suffire.
+            // TODO 003 : Faire une méthode init et une méthode run.
             try
             {
                 System.IO.StreamReader file = new System.IO.StreamReader("Settings.txt");
@@ -95,6 +97,8 @@ namespace Compteur_abonnes
                     {
                         media = 3;
                     }
+                    
+                    // TODO 004 : media = (int)(count / mediaDuration); // devrait suffire.
                 }
                 else
                 {
@@ -103,6 +107,7 @@ namespace Compteur_abonnes
 
                 try
                 {
+                    // TODO 005 : Possible d'économiser du code ici.
                     if (media == 1)
                     {
                         media = 1;
@@ -151,6 +156,7 @@ namespace Compteur_abonnes
 
         static string readFileLineExcludingComment(System.IO.StreamReader file)
         {
+            // TODO 006 : L'inconvénient c'est que les settings doivent être défini dans un ordre précis.
             bool state = false;
 
             string line = string.Empty;
@@ -186,6 +192,7 @@ namespace Compteur_abonnes
             comPort.Write(bytesToSend, 0, 5);
         }
 
+        // TODO 007 : Mettre tout ça dans des fichiers et des classes séparés.
         static int getYoutubeSubscriberCount()
         {
             System.Net.WebClient wb = new System.Net.WebClient();
