@@ -5,3 +5,11 @@ c:\users\fardenco\documents\visual studio 2015\Projects\Compteur_abonnes\Compteu
 c:\users\fardenco\documents\visual studio 2015\Projects\Compteur_abonnes\Compteur_abonnes\obj\Debug\Compteur_abonnes.exe
 c:\users\fardenco\documents\visual studio 2015\Projects\Compteur_abonnes\Compteur_abonnes\obj\Debug\Compteur_abonnes.pdb
 c:\users\fardenco\documents\visual studio 2015\Projects\Compteur_abonnes\Compteur_abonnes\bin\Debug\Newtonsoft.Json.dll
+E:\Utilisateurs\Arnaud\Documents\GitHub\FollowersCounter\PC\Compteur_abonnes\Compteur_abonnes\bin\Debug\Compteur_abonnes.exe.config
+E:\Utilisateurs\Arnaud\Documents\GitHub\FollowersCounter\PC\Compteur_abonnes\Compteur_abonnes\bin\Debug\Compteur_abonnes.exe
+E:\Utilisateurs\Arnaud\Documents\GitHub\FollowersCounter\PC\Compteur_abonnes\Compteur_abonnes\bin\Debug\Compteur_abonnes.pdb
+E:\Utilisateurs\Arnaud\Documents\GitHub\FollowersCounter\PC\Compteur_abonnes\Compteur_abonnes\bin\Debug\Newtonsoft.Json.dll
+E:\Utilisateurs\Arnaud\Documents\GitHub\FollowersCounter\PC\Compteur_abonnes\Compteur_abonnes\obj\Debug\Compteur_abonnes.csprojResolveAssemblyReference.cache
+E:\Utilisateurs\Arnaud\Documents\GitHub\FollowersCounter\PC\Compteur_abonnes\Compteur_abonnes\obj\Debug\Compteur_abonnes.csproj.CoreCompileInputs.cache
+E:\Utilisateurs\Arnaud\Documents\GitHub\FollowersCounter\PC\Compteur_abonnes\Compteur_abonnes\obj\Debug\Compteur_abonnes.exe
+E:\Utilisateurs\Arnaud\Documents\GitHub\FollowersCounter\PC\Compteur_abonnes\Compteur_abonnes\obj\Debug\Compteur_abonnes.pdb

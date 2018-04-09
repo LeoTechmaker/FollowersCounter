@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
+using System.Collections;
 using System.IO.Ports;
 
 namespace Compteur_abonnes
@@ -18,20 +19,14 @@ namespace Compteur_abonnes
         static int    mediaDuration       = 0;
         static byte   mediaHold           = 0;
 
-        const byte mediaCount = 3;
+        const byte      mediaCount = 3;
         static string[] mediaNames = new string[mediaCount] {"YouTube", "Twitter", "Facebook"};
-
-        static void ExceptionMngt(Exception e)
-        {
-            // TODO 001 : Implémenter ExceptionMngt ou mieux gérer les exceptions
-        }
 
         static void Main(string[] args)
         {
-            // TODO 002 : Un peu trop de blocs try / catch dans le main. Un seul bloc englobant le main devrait suffire.
-            // TODO 003 : Faire une méthode init et une méthode run.
             try
             {
+                // Initialisation
                 System.IO.StreamReader file = new System.IO.StreamReader("Settings.txt");
 
                 comPortName         = readFileLineExcludingComment(file);
@@ -44,114 +39,63 @@ namespace Compteur_abonnes
                 mediaHold           = BitConverter.GetBytes(int.Parse(readFileLineExcludingComment(file)))[0];
 
                 file.Close();
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine("Fichier Settings invalide");
-                Console.WriteLine(e.Message);
-                Console.Read();
-                Environment.Exit(0);
-            }
 
-            if(comPortName == string.Empty || youTubeChannelId == string.Empty || youTubeApiKey == string.Empty || twitterPageName == string.Empty || facebookPageId == string.Empty || facebookAccessToken == string.Empty || mediaDuration < 1 || mediaHold < 0 || mediaHold > mediaCount)
-            {
-                Console.WriteLine("Paramètre(s) du fichier Settings invalide(s)");
-                Console.Read();
-                Environment.Exit(0);
-            }
+                if (comPortName == string.Empty || youTubeChannelId == string.Empty || youTubeApiKey == string.Empty || twitterPageName == string.Empty || facebookPageId == string.Empty || facebookAccessToken == string.Empty || mediaDuration < 1 || mediaHold < 0 || mediaHold > mediaCount)
+                {
+                    throw new Exception("Paramètre(s) du fichier Settings invalide(s)");
+                }
 
-            comPort.BaudRate = 115200;
-            comPort.PortName = comPortName;
-
-            try
-            {
+                comPort.BaudRate = 115200;
+                comPort.PortName = comPortName;
+                
                 comPort.Open();
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine("Port COM invalide (" + comPortName + ")");
-                Console.WriteLine(e.Message);
-                Console.Read();
-                Environment.Exit(0);
-            }
 
-            System.Threading.Thread.Sleep(1000);
+                System.Threading.Thread.Sleep(1000);
 
-            int count = 0;
-            while(true)
-            {
-                int value = 0;
-                byte media = 0;
+                int count = 0;
 
-                if(mediaHold == 0)
+                // Boucle
+                while (true)
                 {
-                    if (count / mediaDuration == 0)
+                    int value = 0;
+                    byte media = 0;
+
+                    if (mediaHold == 0) media = (byte)((count / mediaDuration) + 1);
+                    else media = mediaHold;
+
+                    switch(media)
                     {
-                        media = 1;
+                        case 1:
+                            value = getYoutubeSubscriberCount();
+                            break;
+                        case 2:
+                            value = getTwitterFollowerCount();
+                            break;
+                        case 3:
+                            value = getFacebookLikeCount();
+                            break;
+                        default:
+                            throw new Exception("Invalid value.");
                     }
-                    else if (count / mediaDuration == 1)
-                    {
-                        media = 2;
-                    }
-                    else if (count / mediaDuration == 2)
-                    {
-                        media = 3;
-                    }
+
+                    Console.WriteLine(DateTime.Now.ToString("HH:mm:ss") + " - " + mediaNames[media - 1] + " : " + value);
                     
-                    // TODO 004 : media = (int)(count / mediaDuration); // devrait suffire.
-                }
-                else
-                {
-                    media = mediaHold;
-                }
-
-                try
-                {
-                    // TODO 005 : Possible d'économiser du code ici.
-                    if (media == 1)
-                    {
-                        media = 1;
-                        value = getYoutubeSubscriberCount();
-                    }
-                    else if (media == 2)
-                    {
-                        media = 2;
-                        value = getTwitterFollowerCount();
-                    }
-                    else if (media == 3)
-                    {
-                        media = 3;
-                        value = getFacebookLikeCount();
-                    }
-                }
-                catch(Exception e)
-                {
-                    Console.WriteLine("Erreur de lecture des données pour le média " + mediaNames[media - 1]);
-                    Console.WriteLine(e.Message);
-                    Console.Read();
-                    Environment.Exit(0);
-                }
-
-                Console.WriteLine(DateTime.Now.ToString("HH:mm:ss") + " - " + mediaNames[media - 1] + " : " + value);
-                
-                try
-                {
                     refreshCounter(media, value);
-                }
-                catch(Exception e)
-                {
-                    Console.WriteLine("Erreur de traitement ou d'envoi des données pour le média " + mediaNames[media - 1] + " sur le port " + comPortName);
-                    Console.WriteLine(e.Message);
-                    Console.Read();
-                    Environment.Exit(0);
-                }
-                
-                count = count < mediaDuration * 3 - 1 ? count + 1 : 0;
 
-                System.Threading.Thread.Sleep(2000);
+                    count = count < mediaDuration * 3 - 1 ? count + 1 : 0;
+
+                    System.Threading.Thread.Sleep(2000);
+                }
             }
-            
-            comPort.Close();
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception : " + e.Message);
+                Console.Read();
+            }
+            finally
+            {
+                if(comPort.IsOpen) comPort.Close();
+            }
         }
 
         static string readFileLineExcludingComment(System.IO.StreamReader file)
