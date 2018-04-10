@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
-using System.Collections;
 using System.IO.Ports;
 
 namespace Compteur_abonnes
@@ -19,7 +18,7 @@ namespace Compteur_abonnes
         static int    mediaDuration       = 0;
         static byte   mediaHold           = 0;
 
-        const byte      mediaCount = 3;
+        const  byte     mediaCount = 3;
         static string[] mediaNames = new string[mediaCount] {"YouTube", "Twitter", "Facebook"};
 
         static void Main(string[] args)
@@ -40,7 +39,15 @@ namespace Compteur_abonnes
 
                 file.Close();
 
-                if (comPortName == string.Empty || youTubeChannelId == string.Empty || youTubeApiKey == string.Empty || twitterPageName == string.Empty || facebookPageId == string.Empty || facebookAccessToken == string.Empty || mediaDuration < 1 || mediaHold < 0 || mediaHold > mediaCount)
+                if (comPortName         == string.Empty ||
+                    youTubeChannelId    == string.Empty ||
+                    youTubeApiKey       == string.Empty ||
+                    twitterPageName     == string.Empty ||
+                    facebookPageId      == string.Empty ||
+                    facebookAccessToken == string.Empty ||
+                    mediaDuration       < 1 ||
+                    mediaHold           < 0 ||
+                    mediaHold           > mediaCount)
                 {
                     throw new Exception("Paramètre(s) du fichier Settings invalide(s)");
                 }
@@ -53,9 +60,10 @@ namespace Compteur_abonnes
                 System.Threading.Thread.Sleep(1000);
 
                 int count = 0;
+                char c = ' ';
 
                 // Boucle
-                while (true)
+                while (c != 27)
                 {
                     int value = 0;
                     byte media = 0;
@@ -85,6 +93,9 @@ namespace Compteur_abonnes
                     count = count < mediaDuration * 3 - 1 ? count + 1 : 0;
 
                     System.Threading.Thread.Sleep(2000);
+
+                    // Si on appuie sur ESC (ASCII code = 27), la boucle s'interromp proprement.
+                    if (Console.KeyAvailable) c = Console.ReadKey().KeyChar;
                 }
             }
             catch (Exception e)
