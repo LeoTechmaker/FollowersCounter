@@ -6,8 +6,9 @@ namespace Compteur_abonnes
 {
     class Program
     {
-        //static SerialPort comPort = new SerialPort();
-        static FakeSerialPort comPort = new FakeSerialPort();
+        static SerialPort comPort = new SerialPort();
+        // Le FakeSerialPort sert pour les test sans Arduino
+        //static FakeSerialPort comPort = new FakeSerialPort();
 
         static string comPortName         = string.Empty;
         static string youTubeChannelId    = string.Empty;
@@ -62,7 +63,7 @@ namespace Compteur_abonnes
                 int count = 0;
                 char c = ' ';
 
-                // Boucle
+                // Boucle principale
                 while (c != 27)
                 {
                     int value = 0;
@@ -111,7 +112,9 @@ namespace Compteur_abonnes
 
         static string readFileLineExcludingComment(System.IO.StreamReader file)
         {
-            // TODO 006 : L'inconvénient c'est que les settings doivent être défini dans un ordre précis.
+            // TODO 001 : L'inconvénient c'est que les settings doivent être défini dans un ordre précis.
+            // Il serait possible de stocker ces infos dans un fichier xml ou json (.net permet de lire ces fichiers facilement)
+            // Mais ici ça fait le taf.
             bool state = false;
 
             string line = string.Empty;
@@ -147,7 +150,8 @@ namespace Compteur_abonnes
             comPort.Write(bytesToSend, 0, 5);
         }
 
-        // TODO 007 : Mettre tout ça dans des fichiers et des classes séparés.
+        // TODO 002 : A voir si il n'y a pas moyen de centraliser un peu le code, mais vu que les api fonctionnent différement,
+        // ça risque d'être compliqué
         static int getYoutubeSubscriberCount()
         {
             System.Net.WebClient wb = new System.Net.WebClient();
