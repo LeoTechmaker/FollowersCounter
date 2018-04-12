@@ -7,144 +7,114 @@ namespace Compteur_abonnes
     class Program
     {
         static SerialPort comPort = new SerialPort();
+        // Le FakeSerialPort sert pour les test sans Arduino
+        //static FakeSerialPort comPort = new FakeSerialPort();
 
-        static string comPortName = string.Empty;
-        static string youTubeChannelId = string.Empty;
-        static string youTubeApiKey = string.Empty;
-        static string twitterPageName = string.Empty;
-        static string facebookPageId = string.Empty;
+        static string comPortName         = string.Empty;
+        static string youTubeChannelId    = string.Empty;
+        static string youTubeApiKey       = string.Empty;
+        static string twitterPageName     = string.Empty;
+        static string facebookPageId      = string.Empty;
         static string facebookAccessToken = string.Empty;
-        static int mediaDuration = 0;
-        static byte mediaHold = 0;
+        static int    mediaDuration       = 0;
+        static byte   mediaHold           = 0;
 
-        const byte mediaCount = 3;
+        const  byte     mediaCount = 3;
         static string[] mediaNames = new string[mediaCount] {"YouTube", "Twitter", "Facebook"};
 
         static void Main(string[] args)
         {
             try
             {
+                // Initialisation
                 System.IO.StreamReader file = new System.IO.StreamReader("Settings.txt");
 
-                comPortName = readFileLineExcludingComment(file);
-                youTubeChannelId = readFileLineExcludingComment(file);
-                youTubeApiKey = readFileLineExcludingComment(file);
-                twitterPageName = readFileLineExcludingComment(file);
-                facebookPageId = readFileLineExcludingComment(file);
+                comPortName         = readFileLineExcludingComment(file);
+                youTubeChannelId    = readFileLineExcludingComment(file);
+                youTubeApiKey       = readFileLineExcludingComment(file);
+                twitterPageName     = readFileLineExcludingComment(file);
+                facebookPageId      = readFileLineExcludingComment(file);
                 facebookAccessToken = readFileLineExcludingComment(file);
-                mediaDuration = int.Parse(readFileLineExcludingComment(file));
-                mediaHold = BitConverter.GetBytes(int.Parse(readFileLineExcludingComment(file)))[0];
+                mediaDuration       = int.Parse(readFileLineExcludingComment(file));
+                mediaHold           = BitConverter.GetBytes(int.Parse(readFileLineExcludingComment(file)))[0];
 
                 file.Close();
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine("Fichier Settings invalide");
-                Console.WriteLine(e.ToString());
-                Console.Read();
-                Environment.Exit(0);
-            }
 
-            if(comPortName == string.Empty || youTubeChannelId == string.Empty || youTubeApiKey == string.Empty || twitterPageName == string.Empty || facebookPageId == string.Empty || facebookAccessToken == string.Empty || mediaDuration < 1 || mediaHold < 0 || mediaHold > mediaCount)
-            {
-                Console.WriteLine("Paramètre(s) du fichier Settings invalide(s)");
-                Console.Read();
-                Environment.Exit(0);
-            }
+                if (comPortName         == string.Empty ||
+                    youTubeChannelId    == string.Empty ||
+                    youTubeApiKey       == string.Empty ||
+                    twitterPageName     == string.Empty ||
+                    facebookPageId      == string.Empty ||
+                    facebookAccessToken == string.Empty ||
+                    mediaDuration       < 1 ||
+                    mediaHold           < 0 ||
+                    mediaHold           > mediaCount)
+                {
+                    throw new Exception("Paramètre(s) du fichier Settings invalide(s)");
+                }
 
-            comPort.BaudRate = 115200;
-            comPort.PortName = comPortName;
-
-            try
-            {
+                comPort.BaudRate = 115200;
+                comPort.PortName = comPortName;
+                
                 comPort.Open();
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine("Port COM invalide (" + comPortName + ")");
-                Console.WriteLine(e.ToString());
-                Console.Read();
-                Environment.Exit(0);
-            }
 
-            System.Threading.Thread.Sleep(1000);
+                System.Threading.Thread.Sleep(1000);
 
-            int count = 0;
-            while(true)
-            {
-                int value = 0;
-                byte media = 0;
+                int count = 0;
+                char c = ' ';
 
-                if(mediaHold == 0)
+                // Boucle principale
+                while (c != 27)
                 {
-                    if (count / mediaDuration == 0)
-                    {
-                        media = 1;
-                    }
-                    else if (count / mediaDuration == 1)
-                    {
-                        media = 2;
-                    }
-                    else if (count / mediaDuration == 2)
-                    {
-                        media = 3;
-                    }
-                }
-                else
-                {
-                    media = mediaHold;
-                }
+                    int value = 0;
+                    byte media = 0;
 
-                try
-                {
-                    if (media == 1)
-                    {
-                        media = 1;
-                        value = getYoutubeSubscriberCount();
-                    }
-                    else if (media == 2)
-                    {
-                        media = 2;
-                        value = getTwitterFollowerCount();
-                    }
-                    else if (media == 3)
-                    {
-                        media = 3;
-                        value = getFacebookLikeCount();
-                    }
-                }
-                catch(Exception e)
-                {
-                    Console.WriteLine("Erreur de lecture des données pour le média " + mediaNames[media - 1]);
-                    Console.WriteLine(e.ToString());
-                    Console.Read();
-                    Environment.Exit(0);
-                }
+                    if (mediaHold == 0) media = (byte)((count / mediaDuration) + 1);
+                    else media = mediaHold;
 
-                Console.WriteLine(DateTime.Now.ToString("HH:mm:ss") + " - " + mediaNames[media - 1] + " : " + value);
-                
-                try
-                {
+                    switch(media)
+                    {
+                        case 1:
+                            value = getYoutubeSubscriberCount();
+                            break;
+                        case 2:
+                            value = getTwitterFollowerCount();
+                            break;
+                        case 3:
+                            value = getFacebookLikeCount();
+                            break;
+                        default:
+                            throw new Exception("Invalid value.");
+                    }
+
+                    Console.WriteLine(DateTime.Now.ToString("HH:mm:ss") + " - " + mediaNames[media - 1] + " : " + value);
+                    
                     refreshCounter(media, value);
-                }
-                catch(Exception e)
-                {
-                    Console.WriteLine("Erreur de traitement ou d'envoi des données pour le média " + mediaNames[media - 1] + " sur le port " + comPortName);
-                    Console.WriteLine(e.ToString());
-                    Console.Read();
-                    Environment.Exit(0);
-                }
-                
-                count = count < mediaDuration * 3 - 1 ? count + 1 : 0;
 
-                System.Threading.Thread.Sleep(2000);
+                    count = count < mediaDuration * 3 - 1 ? count + 1 : 0;
+
+                    System.Threading.Thread.Sleep(2000);
+
+                    // Si on appuie sur ESC (ASCII code = 27), la boucle s'interromp proprement.
+                    if (Console.KeyAvailable) c = Console.ReadKey().KeyChar;
+                }
             }
-            
-            comPort.Close();
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception : " + e.Message);
+                Console.Read();
+            }
+            finally
+            {
+                if(comPort.IsOpen) comPort.Close();
+            }
         }
 
         static string readFileLineExcludingComment(System.IO.StreamReader file)
         {
+            // TODO 001 : L'inconvénient c'est que les settings doivent être défini dans un ordre précis.
+            // Il serait possible de stocker ces infos dans un fichier xml ou json (.net permet de lire ces fichiers facilement)
+            // Mais ici ça fait le taf.
             bool state = false;
 
             string line = string.Empty;
@@ -180,6 +150,8 @@ namespace Compteur_abonnes
             comPort.Write(bytesToSend, 0, 5);
         }
 
+        // TODO 002 : A voir si il n'y a pas moyen de centraliser un peu le code, mais vu que les api fonctionnent différement,
+        // ça risque d'être compliqué
         static int getYoutubeSubscriberCount()
         {
             System.Net.WebClient wb = new System.Net.WebClient();
