@@ -1,7 +1,0 @@
-c:\users\fardenco\documents\visual studio 2015\Projects\Compteur_abonnes\Compteur_abonnes\bin\Debug\Compteur_abonnes.exe.config
-c:\users\fardenco\documents\visual studio 2015\Projects\Compteur_abonnes\Compteur_abonnes\obj\Debug\Compteur_abonnes.csprojResolveAssemblyReference.cache
-c:\users\fardenco\documents\visual studio 2015\Projects\Compteur_abonnes\Compteur_abonnes\bin\Debug\Compteur_abonnes.exe
-c:\users\fardenco\documents\visual studio 2015\Projects\Compteur_abonnes\Compteur_abonnes\bin\Debug\Compteur_abonnes.pdb
-c:\users\fardenco\documents\visual studio 2015\Projects\Compteur_abonnes\Compteur_abonnes\obj\Debug\Compteur_abonnes.exe
-c:\users\fardenco\documents\visual studio 2015\Projects\Compteur_abonnes\Compteur_abonnes\obj\Debug\Compteur_abonnes.pdb
-c:\users\fardenco\documents\visual studio 2015\Projects\Compteur_abonnes\Compteur_abonnes\bin\Debug\Newtonsoft.Json.dll
