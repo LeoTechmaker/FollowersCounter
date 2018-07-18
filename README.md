@@ -16,10 +16,19 @@ Une fois le programme envoyé une première fois, les mises à jour peuvent êtr
 
 Pour récupérer les clés d'API :
 
-Youtube : https://console.developers.google.com/apis
-Facebook : https://developers.facebook.com/
-Instagram : https://www.instagram.com/developer/
+* Youtube : https://console.developers.google.com/apis
+* Facebook : https://developers.facebook.com/
+* Instagram : https://www.instagram.com/developer/
 
 Pour Twitter seul le nom d'utilisateur suffit, pas besoin de clé d'API.
+
+Installation du core Arduino ESP8266 : https://github.com/esp8266/Arduino
+
+Librairies nécessaires :
+* "ArduinoJson" par bblanchon (dans une version < 6) : https://github.com/bblanchon/ArduinoJson
+* "arduino-youtube-api" par witnessmenow : https://github.com/witnessmenow/arduino-youtube-api
+* "arduino-facebook-api" par witnessmenow : https://github.com/witnessmenow/arduino-facebook-api
+* "Adafruit_NeoPixel" par adafruit : https://github.com/adafruit/Adafruit_NeoPixel
+
 
 Si vous avez des idées d'améliorations n'hésitez pas à les soumettre ;)
