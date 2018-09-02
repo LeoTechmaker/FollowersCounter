@@ -95,6 +95,33 @@ const byte digits[35] =
   0b00011111
 };
 
+const byte errorBitmap[21] =
+{
+  0b11111110,
+  0b10001001,
+  0b10001001,
+  0b11111110,
+  0b10001100,
+  0b10001010,
+  0b11111001,
+  
+  0b11101111,
+  0b10011000,
+  0b10011000,
+  0b11101111,
+  0b11001000,
+  0b10101000,
+  0b10011111,
+
+  0b10011110,
+  0b10011001,
+  0b10011001,
+  0b10011110,
+  0b10011100,
+  0b10011010,
+  0b11111001
+};
+
 const byte YtLogoColors[3][3] = {{0, 0, 0}, {255, 0, 0}, {255, 255, 255}};
 const byte YtLogo[8][10] = 
 {
@@ -293,6 +320,31 @@ void print6DigitsNumberWithAnimation(unsigned long number, int xPos, int yPos, c
 
     previousNumber = number;
   }
+}
+
+void printError(int xPos, int yPos)
+{
+  setAreaColor(xPos, xPos + 28, yPos, yPos + 7, 0, 0, 0);
+  
+  for(int i = 0; i < 3; i++)
+  {
+    for(int j = 0; j < 7; j++)
+    {
+      for(int k = 0; k < 8; k++)
+      {
+        int offset = k < 4 ? k : k + 1;
+        offset += i * 10;
+
+        if(bitRead(errorBitmap[i * 7 + j], 7 - k))
+        {
+          pannel[yPos + j + 1][xPos + offset][0] = 255;
+          pannel[yPos + j + 1][xPos + offset][1] = 255;
+          pannel[yPos + j + 1][xPos + offset][2] = 255;
+        }
+      }
+    }
+  }
+  refreshDisplay();
 }
 
 void serialPrintPannel()
@@ -793,14 +845,19 @@ void loop()
           if(!logoDisplayed)
           {
             printMediaLogoWithAnimation(media);
-            print6DigitsNumberWithAnimation(value, 11, 0, 255, 255, 255, 1);
             
-            logoDisplayed = true;
+          }
+            
+          if(value != -1)
+          {
+            print6DigitsNumberWithAnimation(value, 11, 0, 255, 255, 255, !logoDisplayed);
           }
           else
           {
-            print6DigitsNumberWithAnimation(value, 11, 0, 255, 255, 255);
+            printError(11, 0);
           }
+          
+          logoDisplayed = true;
   
           previousNumber = value;
   
