@@ -36,11 +36,19 @@ Si vous avez des idées d'améliorations n'hésitez pas à les soumettre ;)
 
 Pourquoi faut-il une version du core Arduino ESP8266 dans une version différente de 2.4.1 ?
 Car cette version contient une fuite de mémoire. le programme fonctionne mais finit par crasher après un peu de temps. Après chaque requête, la quantité de RAM libre baisse un peu. L'appel à la fonction HTTPClient.GET() provoque un crash si la quantité disponible de RAM est trop faible. Les requêtes avec prise en charge du SSL demandent pas mal de RAM.
-Cette fuite n'était présente que dans la dernière version au moment où j'ai écris le code, j'ai donc utilisé une version antérieure (la version 2.3) pour faire fonctionner le programme. Le problème est aujourd'hui corrigé sur la branche principale mais aujourd'hui (29/07/2018), aucune release n'a encore été faite depuis la correction.
-Si une version ultérieure sort, elle devrait contenir la correction.
-Le problème est discuté ici
-esp8266/Arduino#4497
+Le problème a été corrigé dans la version 2.4.2, attention donc à bien être à jour.
 
 Pourquoi faut-il une version de "ArduinoJson" dans une version inférieure à 6 ?
 Car à la version 6 (et donc pour les versions ultérieures), des modifications changeant la façon dont s'utilise la librairie ont été effectuées. Le code écrit pour une version 5.x n'est donc pas utilisable avec la version 6.
 Il faudrait adapter le code si on voulait qu'il soit compatible avec les versions 6 et ultérieures.
+
+Une erreur avec Facebook ? Le problème le plus courant est dû à un problème de la librairie FacebookApi avec les nouvelles clés.
+En attendant qu'il soit résolu sur la release, vous pouvez faire fonctionner en modifiant la ligne 153 du fichier "FacebookApi.cpp"
+de ça
+```sh
+String command = "/v2.9/" + pageId + "?fields=fan_count&access_token=" + _appId + "|" + _appSecret;
+```
+à ça
+```sh
+String command = "/v2.9/" + pageId + "?fields=fan_count&access_token=" + _accessToken;
+```
