@@ -6,8 +6,10 @@
 #include <EEPROM.h>
 #include <ESP8266HTTPClient.h>
 #include <ArduinoJson.h>
+#include <JsonStreamingParser.h>
 #include <YoutubeApi.h>
 #include <FacebookApi.h>
+#include <InstagramStats.h>
 #include <Adafruit_NeoPixel.h>
 #include "Config.h"
 
@@ -33,12 +35,13 @@ WiFiClientSecure client;
 
 FacebookApi facebookApi(client, facebookAccessToken, facebookAppId, facebookAppSecret);
 YoutubeApi youtubeApi(youtubeApiKey, client);
+InstagramStats instaStats(client);
 
 Adafruit_NeoPixel bande = Adafruit_NeoPixel(ledAmount, ledPin, NEO_GRB + NEO_KHZ800);
 
 const String mediaName[mediaCount] = {"YouTube", "Twitter", "Facebook", "Instagram"};
 unsigned int mediaDuration[mediaCount] = {mediaDurationDefaultValue, mediaDurationDefaultValue, mediaDurationDefaultValue, mediaDurationDefaultValue};
-const unsigned int mediaCallLimits[mediaCount] = {0, 0, 0, 200}; // Limite de calls à l'API en calls/h
+const unsigned int mediaCallLimits[mediaCount] = {0, 0, 0, 0}; // Limite de calls à l'API en calls/h
 unsigned long mediaLastCallMillis[mediaCount];
 unsigned long mediaLastValue[mediaCount];
 bool firstCallDone[mediaCount];
@@ -438,27 +441,10 @@ int getTwitterFollowerCount(String profileId)
   return -1;
 }
 
-int getInstagramFollowerCount(String profileId, String accessToken)
+int getInstagramFollowerCount(String pageName)
 {
-  String answer = sendGet("https://api.instagram.com/v1/users/" + profileId + "/?access_token=" + accessToken, instagramSSLCertificateFootprint);
-
-  DynamicJsonBuffer jsonBuffer;
-  JsonObject& root = jsonBuffer.parseObject(answer);
-
-  if (root.success()) {
-    if (root.containsKey("data"))
-    {
-      return root["data"]["counts"]["followed_by"].as<int>();
-    }
-    
-    Serial.println("Incompatible JSON");
-  }
-  else
-  {
-    Serial.println("Failed to parse JSON");
-  }
-  
-  return -1;
+  InstagramUserStats response = instaStats.getUserStats(pageName);
+  return response.followedByCount;
 }
 
 int getYoutubeSubscriberCount(String channelId)
@@ -782,7 +768,7 @@ int getMediaValue(int media)
   }
   else if(media == 3)
   {
-    value = getInstagramFollowerCount(instagramPageId, instagramAccessToken);
+    value = getInstagramFollowerCount(instagramPageName);
   }
 
   firstCallDone[media] = true;

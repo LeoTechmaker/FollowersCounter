@@ -6,28 +6,29 @@ Puis amélioré dans la vidéo "J'AMÉLIORE LE TROPHÉE YOUTUBE ?!" (https://www
 Les LEDs sont connectées à la broche D8.
 
 Il suffit de modifier le fichier "Config.h" pour y indiquer les ID de pages ainsi que les différentes clés d'API.
-Ensuite, on envoie le code un ESP8266, et voilà.
+Ensuite, on envoie le code dans un ESP8266, et voilà.
 
 Une fois le programme démarré, on peut accéder aux paramètres en se connectant à l'ESP8266 grâce à son adresse IP ainsi qu'aux identifients indiqués dans le fichier "Config.h".
 Pour connaitre son IP, on peut se connecter à l'ESP avec un câble USB puis ouvrir la liaison série, et effectuer un reset. Au démarrage, le programme envoie l'IP sur la liaison série.
 On peut aussi utiliser une appli comme "Fing" pour effectuer un scan du réseau.
 
-Une fois le programme envoyé une première fois, les mises à jour peuvent être effectuées à travers le réseau (OTA) grâce au mot de passe indiqué dans le fichier "Config.h".
+Une fois le programme envoyé une première fois, les mises à jour peuvent être effectuées à travers le réseau (OTA) grâce au mot de passe spécifié dans le fichier "Config.h".
 
 Pour récupérer les clés d'API :
 
 * Youtube : https://console.developers.google.com/apis
 * Facebook : https://developers.facebook.com/
-* Instagram : https://www.instagram.com/developer/
 
-Pour Twitter seul le nom d'utilisateur suffit, pas besoin de clé d'API.
+Pour Twitter et Instagram, seul le nom d'utilisateur suffit, pas besoin de clé d'API.
 
 Installation du core Arduino ESP8266 dans une version différente de 2.4.1 (détail plus bas dans la description) : https://github.com/esp8266/Arduino
 
 Librairies nécessaires :
 * "ArduinoJson" par bblanchon dans une version < 6 (détail plus bas dans la description) : https://github.com/bblanchon/ArduinoJson/releases/tag/v5.13.2
+* "json-streaming-parser" par squix78 : https://github.com/squix78/json-streaming-parser
 * "arduino-youtube-api" par witnessmenow : https://github.com/witnessmenow/arduino-youtube-api
 * "arduino-facebook-api" par witnessmenow : https://github.com/witnessmenow/arduino-facebook-api
+* "arduino-instagram-stats" par witnessmenow : https://github.com/witnessmenow/arduino-instagram-stats
 * "Adafruit_NeoPixel" par adafruit : https://github.com/adafruit/Adafruit_NeoPixel
 
 

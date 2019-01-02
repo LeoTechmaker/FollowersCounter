@@ -25,6 +25,4 @@
 
 // Instagram settings
 // https://smashballoon.com/instagram-feed/find-instagram-user-id/
-#define instagramPageId "2368412736"
-#define instagramAccessToken "xxxxxxxxxxxxxx"
-#define instagramSSLCertificateFootprint "b98ffcc91caa900719fc817334b4736384dd294e"
+#define instagramPageName "leotechmaker"
