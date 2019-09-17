@@ -18,6 +18,7 @@ Pour récupérer les clés d'API :
 
 * Youtube : https://console.developers.google.com/apis
 * Facebook : https://developers.facebook.com/
+* Twitch : https://dev.twitch.tv/build
 
 Pour Twitter et Instagram, seul le nom d'utilisateur suffit, pas besoin de clé d'API.
 
@@ -29,11 +30,13 @@ Librairies nécessaires :
 * "arduino-youtube-api" par witnessmenow : https://github.com/witnessmenow/arduino-youtube-api
 * "arduino-facebook-api" par witnessmenow : https://github.com/witnessmenow/arduino-facebook-api
 * "arduino-instagram-stats" par witnessmenow : https://github.com/witnessmenow/arduino-instagram-stats
+* "arduino_twitch_api" par witnessmenow : https://github.com/witnessmenow/arduino_twitch_api
 * "Adafruit_NeoPixel" par adafruit : https://github.com/adafruit/Adafruit_NeoPixel
 
 
 Si vous avez des idées d'améliorations n'hésitez pas à les soumettre ;)
 
+Merci à Startix pour l'ajout du support de Twitch (https://github.com/Startix)
 
 Pourquoi faut-il une version du core Arduino ESP8266 dans une version différente de 2.4.1 ?
 Car cette version contient une fuite de mémoire. le programme fonctionne mais finit par crasher après un peu de temps. Après chaque requête, la quantité de RAM libre baisse un peu. L'appel à la fonction HTTPClient.GET() provoque un crash si la quantité disponible de RAM est trop faible. Les requêtes avec prise en charge du SSL demandent pas mal de RAM.

@@ -10,10 +10,11 @@
 #include <YoutubeApi.h>
 #include <FacebookApi.h>
 #include <InstagramStats.h>
+#include <TwitchApi.h>
 #include <Adafruit_NeoPixel.h>
 #include "Config.h"
 
-#define mediaCount 4
+#define mediaCount 5
 #define mediaDurationDefaultValue 4
 
 #define refreshInterval 2000
@@ -27,6 +28,7 @@
 
 #define pannelHeight 8
 #define pannelWidth 40
+#define digitAmount 6
 
 #define eepromCheckValue 123
 
@@ -36,12 +38,13 @@ WiFiClientSecure client;
 FacebookApi facebookApi(client, facebookAccessToken, facebookAppId, facebookAppSecret);
 YoutubeApi youtubeApi(youtubeApiKey, client);
 InstagramStats instaStats(client);
+TwitchApi twitch(client, TWITCH_CLIENT_ID);
 
 Adafruit_NeoPixel bande = Adafruit_NeoPixel(ledAmount, ledPin, NEO_GRB + NEO_KHZ800);
 
-const String mediaName[mediaCount] = {"YouTube", "Twitter", "Facebook", "Instagram"};
-unsigned int mediaDuration[mediaCount] = {mediaDurationDefaultValue, mediaDurationDefaultValue, mediaDurationDefaultValue, mediaDurationDefaultValue};
-const unsigned int mediaCallLimits[mediaCount] = {0, 0, 0, 0}; // Limite de calls à l'API en calls/h
+const String mediaName[mediaCount] = {"YouTube", "Twitter", "Facebook", "Instagram", "Twitch"};
+unsigned int mediaDuration[mediaCount] = {mediaDurationDefaultValue, mediaDurationDefaultValue, mediaDurationDefaultValue, mediaDurationDefaultValue, mediaDurationDefaultValue};
+const unsigned int mediaCallLimits[mediaCount] = {0, 0, 0, 0, 1800}; // Limite de calls à l'API en calls/h
 unsigned long mediaLastCallMillis[mediaCount];
 unsigned long mediaLastValue[mediaCount];
 bool firstCallDone[mediaCount];
@@ -177,6 +180,19 @@ const byte InstaLogo[8][10] =
   {0, 2, 1, 1, 1, 1, 1, 1, 4, 0}
 };
 
+const byte TwitchLogoColors[3][3] = {{0, 0, 0}, {255, 255, 255}, {100, 39, 135}};
+const byte TwitchLogo[8][10] = 
+{
+  {0, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+  {1, 2, 2, 2, 2, 2, 2, 2, 2, 1},
+  {1, 2, 2, 2, 2, 2, 2, 2, 2, 1},
+  {1, 2, 2, 2, 1, 2, 1, 2, 2, 1},
+  {1, 2, 2, 2, 1, 2, 1, 2, 2, 1},
+  {1, 2, 2, 2, 2, 2, 2, 2, 1, 0},
+  {1, 1, 1, 2, 1, 1, 1, 1, 0, 0},
+  {0, 0, 0, 1, 0, 0, 0, 0, 0, 0}
+};
+
 
 long power(long base, long exponent)
 {
@@ -256,15 +272,15 @@ void printDigit(char digit, int xPos, int yPos, char rValue, char gValue, char b
   }
 }
 
-void print6DigitsNumber(unsigned long number, int xPos, int yPos, char rValue, char gValue, char bValue)
+void printNumber(unsigned long number, int xPos, int yPos, char rValue, char gValue, char bValue)
 {
-  for(int i = 0; i < 6; i++)
+  for(int i = 0; i < digitAmount; i++)
   {
-    printDigit(getDigit(number, 6 - i), xPos + i * 5, yPos, rValue, gValue, bValue);
+    printDigit(getDigit(number, digitAmount - i), xPos + i * 5, yPos, rValue, gValue, bValue);
   }
 }
 
-void print6DigitsNumberWithAnimation(unsigned long number, int xPos, int yPos, char rValue, char gValue, char bValue, int inOutAnim = 0)
+void printNumberWithAnimation(unsigned long number, int xPos, int yPos, char rValue, char gValue, char bValue, int inOutAnim = 0)
 {
   float startNumber = previousNumber;
   float stepDelta = ((float) number - previousNumber) / 3.0;
@@ -279,12 +295,24 @@ void print6DigitsNumberWithAnimation(unsigned long number, int xPos, int yPos, c
     for(int a = 0; a < 8; a++)
     //for(int a = 7; a >= 0; a--)
     {
-      setAreaColor(xPos, xPos + 28, yPos, yPos + 7, 0, 0, 0);
+      setAreaColor(xPos, xPos + (digitAmount * 5 - 2), yPos, yPos + 7, 0, 0, 0);
       
-      for(int i = 0; i < 6; i++)
+      bool firstDigitAppeared = false;
+
+      for(int i = 0; i < digitAmount; i++)
       {
-        int newDigit = getDigit(number, 6 - i);
-        int previousDigit = getDigit(previousNumber, 6 - i);
+        int newDigit = getDigit(number, digitAmount - i);
+
+        if(newDigit != 0)
+        {
+          firstDigitAppeared = true;
+        }
+        else if(!showLeftZeros && !firstDigitAppeared && i != digitAmount - 1)
+        {
+          continue;
+        }
+
+        int previousDigit = getDigit(previousNumber, digitAmount - i);
         int delta = newDigit - previousDigit;
         bool upShift = stepDelta > 0;
         
@@ -327,7 +355,7 @@ void print6DigitsNumberWithAnimation(unsigned long number, int xPos, int yPos, c
 
 void printError(int xPos, int yPos)
 {
-  setAreaColor(xPos, xPos + 28, yPos, yPos + 7, 0, 0, 0);
+  setAreaColor(xPos, xPos + (digitAmount * 5 - 2), yPos, yPos + 7, 0, 0, 0);
   
   for(int i = 0; i < 3; i++)
   {
@@ -462,6 +490,20 @@ int getYoutubeSubscriberCount(String channelId)
 int getFacebookFanCount(String pageId)
 {
   return facebookApi.getPageFanCount(pageId);
+}
+
+int getTwitchFollowerCount()
+{
+  UserData user = twitch.getUserData(TWITCH_LOGIN);
+  FollowerData followerData = twitch.getFollowerData(user.id);
+  if(!followerData.error)
+  {
+    return followerData.total;
+  }
+  else
+  {
+    return -1;
+  }
 }
 
 void printMediaSettings()
@@ -666,6 +708,7 @@ void setup() {
   });
   
   ArduinoOTA.setPassword(otaPassword);
+  ArduinoOTA.setHostname(wirelessHostname);
   
   ArduinoOTA.begin();
 
@@ -707,7 +750,7 @@ void setup() {
 
   printLogoWithAnimation(YtLogo, YtLogoColors);
 
-  print6DigitsNumberWithAnimation(0, 11, 0, 255, 255, 255, 1);
+  printNumberWithAnimation(0, 11, 0, 255, 255, 255, 1);
 
   refreshDisplay();
 }
@@ -729,6 +772,10 @@ void printMediaLogoWithAnimation(int media)
   else if(media == 3)
   {
     printLogoWithAnimation(InstaLogo, InstaLogoColors);
+  }
+  else if(media == 4)
+  {
+    printLogoWithAnimation(TwitchLogo, TwitchLogoColors);
   }
 
   return;
@@ -769,6 +816,10 @@ int getMediaValue(int media)
   else if(media == 3)
   {
     value = getInstagramFollowerCount(instagramPageName);
+  }
+  else if(media == 4)
+  {
+    value = getTwitchFollowerCount();
   }
 
   firstCallDone[media] = true;
@@ -836,7 +887,7 @@ void loop()
             
           if(value != -1)
           {
-            print6DigitsNumberWithAnimation(value, 11, 0, 255, 255, 255, !logoDisplayed);
+            printNumberWithAnimation(value, 11, 0, 255, 255, 255, !logoDisplayed);
           }
           else
           {

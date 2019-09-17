@@ -26,3 +26,9 @@
 // Instagram settings
 // https://smashballoon.com/instagram-feed/find-instagram-user-id/
 #define instagramPageName "leotechmaker"
+
+// Twitch settings
+#define twitchClientId "xxxxxxxxxxxxxx"
+#define twitchUsername "leotechmaker"
+
+#define showLeftZeros true
