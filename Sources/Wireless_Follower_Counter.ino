@@ -38,7 +38,7 @@ WiFiClientSecure client;
 FacebookApi facebookApi(client, facebookAccessToken, facebookAppId, facebookAppSecret);
 YoutubeApi youtubeApi(youtubeApiKey, client);
 InstagramStats instaStats(client);
-TwitchApi twitch(client, TWITCH_CLIENT_ID);
+TwitchApi twitch(client, twitchClientId);
 
 Adafruit_NeoPixel bande = Adafruit_NeoPixel(ledAmount, ledPin, NEO_GRB + NEO_KHZ800);
 
@@ -494,7 +494,7 @@ int getFacebookFanCount(String pageId)
 
 int getTwitchFollowerCount()
 {
-  UserData user = twitch.getUserData(TWITCH_LOGIN);
+  UserData user = twitch.getUserData(twitchUsername);
   FollowerData followerData = twitch.getFollowerData(user.id);
   if(!followerData.error)
   {
