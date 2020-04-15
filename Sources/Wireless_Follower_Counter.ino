@@ -49,6 +49,7 @@ unsigned long mediaLastCallMillis[mediaCount];
 unsigned long mediaLastValue[mediaCount];
 bool firstCallDone[mediaCount];
 bool mediaEnabled[mediaCount];
+bool showLeftZeros;
 
 byte pannel[pannelHeight][pannelWidth][3];
 
@@ -547,11 +548,12 @@ void readSettingsFromEeprom()
     for(int media = 0; media < mediaCount; media++)
     {
       int offset = 100 + media * 5;
-      mediaEnabled[media] = EEPROM.read(offset) == 1 ? true : false;
+      mediaEnabled[media] = EEPROM.read(offset) == 1;
       mediaDuration[media] = EEPROMReadInt(offset + 1);
     }
 
     brightness = EEPROM.read(1);
+    showLeftZeros = EEPROM.read(2) == 1;
   }
 }
 
@@ -569,6 +571,12 @@ void writeBrightnessSettingToEeprom()
   EEPROM.commit();
 }
 
+void writeLeftZerosSettingToEeprom()
+{
+  EEPROM.write(2, showLeftZeros ? 1 : 0);
+  EEPROM.commit();
+}
+
 void writeSettingsToEeprom()
 {
   for(int media = 0; media < mediaCount; media++)
@@ -577,6 +585,8 @@ void writeSettingsToEeprom()
   }
 
   writeBrightnessSettingToEeprom();
+
+  writeLeftZerosSettingToEeprom();
 
   EEPROM.write(0, eepromCheckValue);
 
@@ -590,6 +600,10 @@ String generateIndexHtml(String message = "")
   html += message + "\n<br>\n";
   html += "<form action=\"/index\" method=\"get\">Brightness % <input type=\"number\" min=\"0\" max=\"100\" name=\"brightness\" value=\"" + String(brightness) + "\"><input type=\"submit\" value=\"Apply\"></form>";
   html += "<table class=\"table\">\n";
+
+  html += "<form action=\"/index\" method=\"get\">Show Left Zeros<button name=\"HideOrShow" "\" value=\"hideleftzeros" "\">Hide/Show<type=\"submit\" value=\"HideOrShow\"></form>";
+  html += "<table class=\"table\">\n";
+
   html += "<tr><td>Media</td><td>Enabled</td><td>Duration</td></tr>";
 
   for(int media = 0; media < mediaCount; media++)
@@ -657,6 +671,20 @@ void handleIndex()
       writeBrightnessSettingToEeprom();
 
       message = "Brightness changed.";
+    }
+  }
+  else if (server.arg("HideOrShow") == "hideleftzeros")
+  {
+    showLeftZeros = !showLeftZeros;
+ 
+    writeLeftZerosSettingToEeprom();
+
+    if (showLeftZeros == true)
+    {
+      message = "Show Left Zeros.";
+    }
+    else {
+      message = "Hide Left Zeros.";
     }
   }
 

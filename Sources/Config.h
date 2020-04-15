@@ -30,5 +30,3 @@
 // Twitch settings
 #define twitchClientId "xxxxxxxxxxxxxx"
 #define twitchUsername "leotechmaker"
-
-#define showLeftZeros true
