@@ -13,6 +13,8 @@
 // YouTube settings
 #define youtubeChannelId "UCRhyS_ylPQ5GWBl1lK92ftA"
 #define youtubeApiKey "xxxxxxxxxxxxxx"
+#define youtubeSubsFromAlternativeSource false
+#define youtubeSubsSourceUrl "xxxxxxxxxxxxxxxxxx"
 
 // Facebook settings
 #define facebookPageId "538994972920294"
@@ -30,3 +32,5 @@
 // Twitch settings
 #define twitchClientId "xxxxxxxxxxxxxx"
 #define twitchUsername "leotechmaker"
+
+#define hideErrors true

@@ -478,13 +478,22 @@ int getInstagramFollowerCount(String pageName)
 
 int getYoutubeSubscriberCount(String channelId)
 {
-  if(youtubeApi.getChannelStatistics(youtubeChannelId))
+  if(youtubeSubsFromAlternativeSource)
   {
-    return youtubeApi.channelStats.subscriberCount;
+    String answer = sendGet(youtubeSubsSourceUrl);
+    //Serial.println(answer);
+    return answer.toInt();
   }
   else
   {
-    return -1;
+    if(youtubeApi.getChannelStatistics(youtubeChannelId))
+    {
+      return youtubeApi.channelStats.subscriberCount;
+    }
+    else
+    {
+      return -1;
+    }
   }
 }
 
@@ -759,6 +768,7 @@ void setup() {
     for(int i = 0; i < mediaCount; i++)
     {
       mediaEnabled[i] = true;
+      mediaLastValue[i] = -1;
     }
 
     writeSettingsToEeprom();
@@ -852,7 +862,16 @@ int getMediaValue(int media)
 
   firstCallDone[media] = true;
   mediaLastCallMillis[media] = millis();
-  mediaLastValue[media] = value;
+  
+  if(hideErrors && value < 1)
+  {
+    Serial.println("Error, using last value");
+    value = mediaLastValue[media];
+  }
+  else
+  {
+    mediaLastValue[media] = value;
+  }
   
   return value;
 }
